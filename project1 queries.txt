@@ -1,0 +1,72 @@
+#HADOOP:
+
+hadoop fs -mkdir /anosh/fb/
+
+hadoop fs -ls /anosh/fb/
+
+#HIVE:
+
+CREATE TABLE fb(userid int,age int,dob_day int,dob_year int,dob_month int ,gender  string,tenure  int,friend_count  int,friendships_initiated  int,likes int,likes_received int,mobile_likes int ,
+mobile_likes_received int ,computer_likes int ,computer_likes_received  int) row format delimited fields terminated by ',' stored as textfile location '/fb/';
+
+set hive.cli.print.header=true;   #to display column names also
+SELECT * FROM fb LIMIT 5;   # to get the first 5 rows alone
+
+## OUTPUT DATA sending to new hive table:
+ 
+insert overwrite table p_pat partition(gender ='male') select pid,pname,drug,bill from pat1 where gender = 'male';
+
+insert overwrite table fb_gender select CONCAT('for the gender category:',' ' ,gender, ' ','the average friend count is:',' ',round(avg(friend_count),2)) from fb GROUP BY gender;
+
+## STORE OUTPUT TABLE IN HADOOP:
+
+INSERT OVERWRITE DIRECTORY "/fb_gender/output" ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' SELECT * FROM fb_gender;
+
+
+#QUESTIONS:
+
+1. find total no. of users in this fb data set
+
+hive>  SELECT count(userid) AS Total_users FROM fb;
+
+2.find out the no.of fb users above the age 25.
+
+hive> SELECT COUNT(userid) AS totalUsers FROM fb WHERE age>25;
+
+3. Male or female who has more number of friends in fb ?
+
+hive> select CONCAT('for the gender category:',' ' ,gender, ' ','the average friend count is:',' ',round(avg(friend_count),2)) from fb GROUP BY gender;
+
+
+4. How many likes does young people get compared to the older age group of people using fb? # young (13 to 25) older(above 25)
+
+hive> SELECT avg(likes_received) AS avg_likes_received FROM fb WHERE age>25;
+hive>  SELECT avg(likes_received) AS avg_likes_received FROM fb WHERE age<=25 AND age>=13;
+
+5. Find out no. of fb users for each birthday month.
+
+hive> SELECT dob_month, count(userid) AS user_count FROM fb GROUP BY dob_month;
+
+6. Do young people use mobile or computer for fb browsing more frequently?
+
+hive> SELECT avg(mobile_likes) AS mobile_likes, avg(computer_likes) AS computer_likes FROM fb WHERE age<=25 AND age>=13;
+
+7.Do older people use mobile or computer for fb browsing more frequently?
+
+hive> SELECT avg(mobile_likes) AS mobile_likes, avg(computer_likes) AS computer_likes FROM fb WHERE age>25;
+
+## TO DISPLAY THE COLMNS IN NEW FILE USING PYTHON:
+
+import pandas as pd
+data = pd.read_csv(r"C:\Users\Ajish Shaju\Downloads\input files\pseudo_facebook.csv")
+n = len(data)
+userid = list(data['userid'].unique())
+old_userid = 0 
+f = open("fb_details.txt",'a')
+for i in data.index:
+    if data['userid'][i] in userid:
+        record = data['userid'][i],data['age'][i],data['gender'][i],data['friend_count'][i]
+        f.write(str(record)+'\n')
+        userid.remove(data['userid'][i])
+f.close()
+
