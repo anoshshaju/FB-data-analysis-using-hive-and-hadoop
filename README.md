@@ -8,8 +8,8 @@ Finally moved those tables into HDFS (using overwrite directory).
 "fb_details.txt" file is the output file of the python program using pandas, containing few columns of the input fb data.
 
 # Technologies Used
-HIVE - version 1.2
-HADOOP - version 2.7
+1. HIVE - version 1.2
+2. HADOOP - version 2.7
 
 # Input Data
 Input data obtained from Kaggle as a .CSV file.
