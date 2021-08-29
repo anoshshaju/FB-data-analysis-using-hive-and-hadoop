@@ -3,7 +3,8 @@
 
 Input data obtained from Kaggle as a .CSV file.
 
-# Technologies used are : HIVE and HADOOP.
+# TECHNOLOGIES USED:
+HIVE and HADOOP.
 
 # DESCRIPTION:
 
